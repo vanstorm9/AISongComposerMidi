@@ -13,17 +13,23 @@ minors = dict([("A-", 1),("A", 0),("B-", -1),("B", -2),("C", -3),("D-", -4),("D"
 
 #os.chdir("./")
 for file in glob.glob("*.mid"):
+    print 'Parsing file. . .'
     score = music21.converter.parse(file)
+    print 'score: ', score
     key = score.analyze('key')
-#    print key.tonic.name, key.mode
+    print 'first key: ', key.tonic.name, key.mode
     if key.mode == "major":
+        print 'major'
         halfSteps = majors[key.tonic.name]
         
     elif key.mode == "minor":
+        print 'minor'
         halfSteps = minors[key.tonic.name]
-    
+    print 'half steps: ', halfSteps
     newscore = score.transpose(halfSteps)
+    print 'newscore: ', newscore
     key = newscore.analyze('key')
+    print key
     print key.tonic.name, key.mode
     newFileName = "C_" + file
     newscore.write('midi',newFileName)
