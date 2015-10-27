@@ -24,7 +24,7 @@ pat = midi.Pattern()
 
 #folder_trans = 'training-songs'
 #folder_trans = 'instruments'
-folder_trans = np.array(['instruments/piano','instruments/guitar'])
+folder_trans = np.array(['instruments/guitar','instruments/piano'])
 #folder_trans = 'training-video-test'
 #folder_trans = 'training-kid-songs'
 #folder_trans = 'training-classical-songs'
@@ -52,6 +52,8 @@ def pitch_prev_array_add(pitch, pitch_ar):
 def tranverse_all_folders(folder_trans):
     j = 0
     k = 0
+
+    label_ar = np.array([])
     while k < folder_trans.size:
         
         for path in os.listdir(folder_trans[k]):
@@ -62,6 +64,11 @@ def tranverse_all_folders(folder_trans):
             # Append the track to the pattern
             pat.append(track)
             # Goes through extracted song and reconstruct them (pattern[1])
+
+
+            temp = np.array([k])
+            label_ar = np.concatenate((label_ar, temp))
+
             '''
             tr = 1
             start_val = 1
@@ -74,18 +81,28 @@ def tranverse_all_folders(folder_trans):
             i = 80
             '''
             # Suteki Da Ne sample window
-            tr = 1
+            tr = 2
             start_val = 1
             i = 1
-            
+            limit = 200
+            #print len(pattern[tr])
             while True:
 
                 # This is the if statement to break out of loop
                 # Iterates to end of song or at a set number
                 #if i > len(pattern[tr]) - 2:
-                if i > 1200:
+                if i > limit:
                     break
+                #print pattern[tr][i]
                 tick = pattern[tr][i].tick
+
+                #print pattern[tr][i].data
+                #print len(pattern[tr][i].data)
+                
+                if len(pattern[tr][i].data) == 0:
+                    print 'Entering'
+                    break
+                
                 pitch = pattern[tr][i].data[0]
 
                 # Because some pattern[][].data does not have a second array element
@@ -110,7 +127,7 @@ def tranverse_all_folders(folder_trans):
                 #track.append(midi.NoteOnEvent(tick= tick, channel=1, data=[pitch, velocity]))
                 i = i + 1
             
-            print tick_ar.shape
+            #print tick_ar.shape
             if j == 0:
                 tick_u_ar = tick_ar
                 velocity_u_ar = velocity_ar
@@ -125,14 +142,15 @@ def tranverse_all_folders(folder_trans):
                 pitch_u_ar = np.concatenate((pitch_u_ar, pitch_ar[None,:]))
                 velocity_u_ar = np.concatenate((velocity_u_ar, velocity_ar[None,:]))
             j = j + 1
-            k = k + 1
-    return pattern, tick_u_ar, velocity_u_ar, pitch_u_ar
+        k = k + 1
+            
+    return pattern, tick_u_ar, velocity_u_ar, pitch_u_ar, label_ar
 
 
 
 
 # Go through all folders and form the matrix
-pattern, tick_ar, velocity_ar, pitch_ar = tranverse_all_folders(folder_trans)
+pattern, tick_ar, velocity_ar, pitch_ar, label_ar = tranverse_all_folders(folder_trans)
 
 
 print tick_ar.shape
@@ -162,7 +180,7 @@ np.random.seed(42)
 centers = [[1, 1], [-1, -1], [1, -1]]
 X = tick_ar
 #X = pitch_ar
-y = np.array([0,1])
+y = label_ar
 
 estimators = {'k_means_iris_3': KMeans(n_clusters=2),
               'k_means_iris_8': KMeans(n_clusters=2),
@@ -187,7 +205,7 @@ for name, est in estimators.items():
     ax.w_zaxis.set_ticklabels([])
     ax.set_xlabel('Petal width')
     ax.set_ylabel('Sepal length')
-    ax.set_zlabel('Petal length')
+    ax.set_zlabel('Ticks')
     fignum = fignum + 1
 
 # Plot the ground truth
@@ -207,7 +225,7 @@ for name, label in [('Setosa', 0),
               bbox=dict(alpha=.5, edgecolor='w', facecolor='w'))
 '''
 # Reorder the labels to have colors matching the cluster results
-y = np.choose(y, [1, 2, 0]).astype(np.float)
+#y = np.choose(y, [1, 2, 0]).astype(np.float)
 ax.scatter(X[:, 3], X[:, 0], X[:, 2], c=y)
 
 ax.w_xaxis.set_ticklabels([])
@@ -215,7 +233,7 @@ ax.w_yaxis.set_ticklabels([])
 ax.w_zaxis.set_ticklabels([])
 ax.set_xlabel('Petal width')
 ax.set_ylabel('Sepal length')
-ax.set_zlabel('Petal length')
+ax.set_zlabel('Ticks')
 plt.show()
 
 
