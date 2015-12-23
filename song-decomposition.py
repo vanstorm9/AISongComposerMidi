@@ -3,8 +3,9 @@ import numpy as np
 
 #path = 'example.mid'
 #path = 'Songs/my-heart-will-go-on-titanic.mid'
-#path = 'Songs/Suteki-Da-Ne.mid'
-path = 'Songs/appass_2.mid'
+path = 'Songs/Suteki-Da-Ne.mid'
+#path = 'Songs/appass_2.mid'
+#path = 'training-ground/twinkle_twinkle.mid'
 #path = 'result.mid'
 #path = 'result-sdn-4-2333-d10.mid'
 #path = 'Songs/1-2-3_ngoi_sao.mid'
@@ -49,6 +50,8 @@ pat = midi.Pattern()
 
 while True:
     # Instantiate a MIDI Track (contains a list of MIDI events)
+    note_on = 0
+    note_off = 0
     track = midi.Track()
 
     # Append the track to the pattern
@@ -81,11 +84,14 @@ while True:
     while True:
         note_type = pattern[tr][i].name
         tick = pattern[tr][i].tick
+        if len(pattern[tr][i].data) == 0:
+            print 'skipped'
+            ii = ii + 1
+            break
         pitch = pattern[tr][i].data[0]
-        print note_type
         if note_type == 'Note On' or note_type == 'Note Off':
             #print i
-            if ii > limit:
+            if ii > len(pattern[tr])-5:
             #if i > len(pattern[tr]) - 2:
                 break
 
@@ -125,9 +131,11 @@ while True:
         if note_type == 'Note On':
             channel = pattern[tr][i].channel
             track.append(midi.NoteOnEvent(tick= tick, channel=channel, data=[np.array(pitch), velocity]))
+            note_on = note_on + 1
         elif note_type == 'Note Off':
             channel = pattern[tr][i].channel
             track.append(midi.NoteOffEvent(tick= tick, channel=channel, data=[np.array(pitch), velocity]))
+            note_off = note_off + 1
         '''
         elif note_type == 'Program Change':
             channel = pattern[tr][i].channel
@@ -148,6 +156,8 @@ while True:
         
         
     print len(pat[tr-1])
+
+    # Emergency break if we want to just decompose one channel
     break
     tr = tr + 1
 #print pat
@@ -158,4 +168,7 @@ track.append(eot)
 
 midi.write_midifile("example.mid", pat)
 
+print 'note_on: ', note_on
+print 'note_off: ', note_off
+print ''
 print 'Midi file was written for ', path
