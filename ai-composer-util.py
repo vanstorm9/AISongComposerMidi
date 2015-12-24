@@ -260,7 +260,7 @@ print 'Converting data to list. . .'
 # Extract the first 30 elements of the data vector, then convert to list
 
 #window_len = 120
-window_len = 300
+window_len = 700
 
 tick_data = tick_ar[:window_len].tolist()
 pitch_data = pitch_ar[:window_len].tolist()
@@ -426,9 +426,9 @@ for (sample, target) in ds.getSequenceIterator(0):
     duration = tick_n/5
     volume = velocity_n
 
-    #time = tick_to_time(tick_n)
-    
-    time = time + 0.5
+    #time = tick_to_time(tick_n) 
+    time = tick_n   # Problem is its chords is not good at all
+    #time = time + 0.5  # Current solution 
     
     MyMIDI.addNote(track,channel,pitch,time,duration,volume)           
 

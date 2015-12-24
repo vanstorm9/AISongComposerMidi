@@ -11,6 +11,7 @@ path = 'Songs/Suteki-Da-Ne.mid'
 #path = 'Songs/1-2-3_ngoi_sao.mid'
 #path = 'Songs/twinkle_twinkle.mid'
 #path = 'Songs/waldstein_2.mid'
+#path = 'Songs/elise.mid'
 #path = 'Songs/Mozart-Movement.mid'
 #path = 'Songs/london-bridges.mid'
 #path = 'Songs/grenade.mid'
@@ -142,14 +143,16 @@ while True:
         elif note_type == 'Program Change':
             channel = pattern[tr][i].channel
             track.append(midi.ProgramChangeEvent(tick= tick, channel=channel, data=[np.array(pitch)]))
+        '''
         elif note_type == 'Control Change':
             channel = pattern[tr][i].channel
             track.append(midi.ControlChangeEvent(tick= tick, channel=channel, data=[np.array(pitch)]))
+        
         elif note_type == 'Track Name':
             text = pattern[tr][i].text
             data = pattern[tr][i].data
             track.append(midi.TrackNameEvent(tick= tick, text=text, data=data))
-        
+        '''
 
 
         i = i + 1
@@ -160,7 +163,7 @@ while True:
     print len(pat[tr-1])
 
     # Emergency break if we want to just decompose one channel
-    
+    # break
     tr = tr + 1
 #print pat
 
