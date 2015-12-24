@@ -3,13 +3,13 @@ import numpy as np
 
 #path = 'example.mid'
 #path = 'Songs/my-heart-will-go-on-titanic.mid'
-#path = 'Songs/Suteki-Da-Ne.mid'
+path = 'Songs/Suteki-Da-Ne.mid'
 #path = 'Songs/10_little_indians.mid'
 #path = 'training-ground/twinkle_twinkle.mid'
 #path = 'result.mid'
 #path = 'result-sdn-4-2333-d10.mid'
 #path = 'Songs/1-2-3_ngoi_sao.mid'
-path = 'Songs/twinkle_twinkle.mid'
+#path = 'Songs/twinkle_twinkle.mid'
 #path = 'Songs/waldstein_2.mid'
 #path = 'Songs/Mozart-Movement.mid'
 #path = 'Songs/london-bridges.mid'
@@ -138,7 +138,7 @@ while True:
             channel = pattern[tr][i].channel
             track.append(midi.NoteOffEvent(tick= tick, channel=channel, data=[np.array(pitch), velocity]))
             note_off = note_off + 1
-        '''
+        
         elif note_type == 'Program Change':
             channel = pattern[tr][i].channel
             track.append(midi.ProgramChangeEvent(tick= tick, channel=channel, data=[np.array(pitch)]))
@@ -149,7 +149,7 @@ while True:
             text = pattern[tr][i].text
             data = pattern[tr][i].data
             track.append(midi.TrackNameEvent(tick= tick, text=text, data=data))
-        '''
+        
 
 
         i = i + 1
@@ -160,7 +160,7 @@ while True:
     print len(pat[tr-1])
 
     # Emergency break if we want to just decompose one channel
-    break
+    
     tr = tr + 1
 #print pat
 

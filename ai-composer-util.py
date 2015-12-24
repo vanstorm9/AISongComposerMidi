@@ -54,6 +54,54 @@ def tick_to_time(tick):
         time = 0
     return time
 
+def velocity_regulate(velocity):
+    # To remove negative numbers and turn them into zero
+    # Also to prevent program from crashing since it only accepts numbers
+    # below 256
+    
+    if velocity < 0:
+        velocity = 0
+
+    
+    if velocity > 255:
+        velocity = velocity/10
+        if velocity > 256:
+            velocity = velocity/4
+    
+    
+    if velocity > 1000:
+        velocity = 100
+    '''
+    elif velocity > 30:
+        velocity = velocity/10
+    '''
+
+    return velocity
+
+def tick_regulate(tick):
+    if tick < 0:
+        tick = 0
+    
+    if tick > 20:
+        tick = tick/10
+        #if tick_n > 256:
+        #    tick_n = tick_n/5
+    
+    return tick
+
+def pitch_regulate(pitch):
+    if pitch < 0:
+        pitch = 0
+    '''
+    if pitch > 256:
+        pitch = pitch/10
+    if pitch < 100 and pitch > 0:
+        pitch = pitch + 100
+        if pitch > 256:
+            pitch = pitch/5
+    '''
+    return pitch
+
 def pitch_prev_array_add(pitch, pitch_ar):
     if pitch_ar == None:
         pitch_ar = np.array([pitch])
@@ -67,8 +115,11 @@ def tranverse_all_folders(folder_trans):
     skip = False
     label_ar = np.array([])
     while k < folder_trans.size:
-
+        # Iterate through each folder
+        
         for path in os.listdir(folder_trans[k]):
+            # Iterate through each song
+            
             #print path
             pattern = midi.read_midifile(folder_trans[k] + slash + path)
             print folder_trans[k] + slash + path
@@ -209,7 +260,7 @@ print 'Converting data to list. . .'
 # Extract the first 30 elements of the data vector, then convert to list
 
 #window_len = 120
-window_len = 2000
+window_len = 300
 
 tick_data = tick_ar[:window_len].tolist()
 pitch_data = pitch_ar[:window_len].tolist()
@@ -329,48 +380,14 @@ for (sample, target) in ds.getSequenceIterator(0):
     
     pred_ar = net.activate(sample)
 
-    tick_n = int(pred_ar[2])
-    pitch_n = int(pred_ar[0])
-    velocity_n = int(pred_ar[1])
 
-    # To remove negative numbers and turn them into zero
-    # Also to prevent program from crashing since it only accepts numbers
-    # below 256
-    if tick_n < 0:
-        tick_n = 0
+    # Predict and regulate predicted values
     
-    if tick_n > 20:
-        tick_n = tick_n/10
-        #if tick_n > 256:
-        #    tick_n = tick_n/5
-    
-    if pitch_n < 0:
-        pitch_n = 0
-    '''
-    if pitch_n > 256:
-        pitch_n = pitch_n/10
-    if pitch_n < 100 and pitch_n > 0:
-        pitch_n = pitch_n + 100
-        if pitch_n > 256:
-            pitch_n = pitch_n/5
-    '''
-    if velocity_n < 0:
-        velocity_n = 0
+    tick_n = tick_regulate(int(pred_ar[2]))
+    pitch_n = pitch_regulate(int(pred_ar[0]))
+    velocity_n = velocity_regulate(int(pred_ar[1]))
 
     
-    if velocity_n > 255:
-        velocity_n = velocity_n/10
-        if velocity_n > 256:
-            velocity_n = velocity_n/4
-    
-    
-    if velocity_n > 1000:
-        velocity_n = 100
-    '''
-    elif velocity_n > 30:
-        velocity_n = velocity_n/10
-    '''
-
 
     
     if i == 0:    
