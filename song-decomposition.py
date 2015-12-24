@@ -3,13 +3,13 @@ import numpy as np
 
 #path = 'example.mid'
 #path = 'Songs/my-heart-will-go-on-titanic.mid'
-path = 'Songs/Suteki-Da-Ne.mid'
-#path = 'Songs/appass_2.mid'
+#path = 'Songs/Suteki-Da-Ne.mid'
+#path = 'Songs/10_little_indians.mid'
 #path = 'training-ground/twinkle_twinkle.mid'
 #path = 'result.mid'
 #path = 'result-sdn-4-2333-d10.mid'
 #path = 'Songs/1-2-3_ngoi_sao.mid'
-#path = 'Songs/twinkle_twinkle.mid'
+path = 'Songs/twinkle_twinkle.mid'
 #path = 'Songs/waldstein_2.mid'
 #path = 'Songs/Mozart-Movement.mid'
 #path = 'Songs/london-bridges.mid'
@@ -23,7 +23,7 @@ pattern = midi.read_midifile(path)
 
 #tr = 0
 limit = 200
-tr = 1
+tr = 0
 start_val = 1
 i = 1
 
@@ -47,11 +47,11 @@ print 'Extracting all of pattern[1]'
 
 # Instantiate a MIDI Pattern (contains a list of tracks)
 pat = midi.Pattern()
-
+note_on = 0
+note_off = 0
 while True:
     # Instantiate a MIDI Track (contains a list of MIDI events)
-    note_on = 0
-    note_off = 0
+    
     track = midi.Track()
 
     # Append the track to the pattern
@@ -62,6 +62,7 @@ while True:
     #if tr > 0:
         print 'breaking. . .'
         break
+        
 
 
     '''
@@ -82,6 +83,7 @@ while True:
     
     
     while True:
+        #print pattern[tr][i]
         note_type = pattern[tr][i].name
         tick = pattern[tr][i].tick
         if len(pattern[tr][i].data) == 0:
@@ -139,10 +141,10 @@ while True:
         '''
         elif note_type == 'Program Change':
             channel = pattern[tr][i].channel
-            track.append(midi.ProgramChangeEvent(tick= tick, channel=channel, data=[np.array(pitch), velocity]))
+            track.append(midi.ProgramChangeEvent(tick= tick, channel=channel, data=[np.array(pitch)]))
         elif note_type == 'Control Change':
             channel = pattern[tr][i].channel
-            track.append(midi.ControlChangeEvent(tick= tick, channel=channel, data=[np.array(pitch), velocity]))
+            track.append(midi.ControlChangeEvent(tick= tick, channel=channel, data=[np.array(pitch)]))
         elif note_type == 'Track Name':
             text = pattern[tr][i].text
             data = pattern[tr][i].data
@@ -165,10 +167,11 @@ while True:
 eot = midi.EndOfTrackEvent(tick=1)
 track.append(eot)
 
+file_name = "example.mid"
 
-midi.write_midifile("example.mid", pat)
+midi.write_midifile(file_name, pat)
 
 print 'note_on: ', note_on
 print 'note_off: ', note_off
 print ''
-print 'Midi file was written for ', path
+print 'Midi file was written for ', path, ' in ', file_name

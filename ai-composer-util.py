@@ -13,6 +13,7 @@ import os.path
 
 slash = '/'
 
+
 print 'Extracting all of pattern[1]'
 # Instantiate a MIDI Pattern (contains a list of tracks)
 pat = midi.Pattern()
@@ -23,7 +24,7 @@ pat = midi.Pattern()
 folder_trans = np.array(['instruments/guitar',
                          'instruments/piano'])
 '''
-#folder_trans = np.array(['training-ground'])
+folder_trans = np.array(['training-ground'])
 
 '''
 folder_trans = np.array(['training-ground',
@@ -31,11 +32,11 @@ folder_trans = np.array(['training-ground',
                          'instruments/piano',
                          'instruments/violin'])
 '''
-
+'''
 folder_trans = np.array(['instruments/guitar',
                          'instruments/piano',
                          'instruments/violin'])
-
+'''
 #folder_trans = 'training-video-test'
 #folder_trans = 'training-kid-songs'
 #folder_trans = 'training-classical-songs'
@@ -66,7 +67,7 @@ def tranverse_all_folders(folder_trans):
     skip = False
     label_ar = np.array([])
     while k < folder_trans.size:
-        
+
         for path in os.listdir(folder_trans[k]):
             #print path
             pattern = midi.read_midifile(folder_trans[k] + slash + path)
@@ -83,9 +84,9 @@ def tranverse_all_folders(folder_trans):
 
 
             # Midi file track information
-            tr = 0
-            start_val = 1
-            i = 1
+            tr = 1
+            start_val = 0
+            i = 0
             limit = 200
 
 
@@ -94,7 +95,7 @@ def tranverse_all_folders(folder_trans):
             p = 0
             exc = True
 
-            
+            '''
             while p < len(pattern):
                 if len(pattern[tr]) >= limit:
                     exc = False
@@ -102,20 +103,29 @@ def tranverse_all_folders(folder_trans):
                 tr = tr + 1
                 p = p + 1
 
+            '''
+                
+            '''
             if exc:
                 print "All of this song's tracks does not have enough notes"
                 quit()
-
-                
+            '''
+            #print pattern[tr]
             while True:
 
                 # This is the if statement to break out of loop
                 # Iterates to end of song or at a set number
-                #if i > len(pattern[tr]) - 2:
+                #print pattern[tr][i]
+                #if i > len(pattern[tr]) - 5:
                 if i > limit:
                     break
-                #print pattern[tr][i]
-         
+                
+
+                # Number of notes happen to be smaller than the limit
+                if len(pattern[tr][i].data) == 0:
+                    i = i + i
+                    print 'Done'
+                    break
                 
                 tick = pattern[tr][i].tick
 
@@ -188,7 +198,7 @@ print 'Converting data to list. . .'
 # Extract the first 30 elements of the data vector, then convert to list
 
 #window_len = 120
-window_len = 50
+window_len = 1200
 
 tick_data = tick_ar[:window_len].tolist()
 pitch_data = pitch_ar[:window_len].tolist()
@@ -199,7 +209,7 @@ print 'Converting data to list. . .'
 # Extract the first 30 elements of the data vector, then convert to list
 
 #window_len = 120
-window_len = 50
+window_len = 2000
 
 tick_data = tick_ar[:window_len].tolist()
 pitch_data = pitch_ar[:window_len].tolist()
