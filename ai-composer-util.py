@@ -114,6 +114,14 @@ def tranverse_all_folders(folder_trans):
     k = 0
     skip = False
     label_ar = np.array([])
+
+    # Instantiate a MIDI Track (contains a list of MIDI events)
+    track = midi.Track()
+    # Append the track to the pattern
+    pat.append(track)
+    # Goes through extracted song and reconstruct them (pattern[1])
+
+
     while k < folder_trans.size:
         # Iterate through each folder
         
@@ -123,12 +131,7 @@ def tranverse_all_folders(folder_trans):
             #print path
             pattern = midi.read_midifile(folder_trans[k] + slash + path)
             print folder_trans[k] + slash + path
-            # Instantiate a MIDI Track (contains a list of MIDI events)
-            track = midi.Track()
-            # Append the track to the pattern
-            pat.append(track)
-            # Goes through extracted song and reconstruct them (pattern[1])
-
+            
 
             temp = np.array([k])
             label_ar = np.concatenate((label_ar, temp))
@@ -249,18 +252,7 @@ print 'Converting data to list. . .'
 # Extract the first 30 elements of the data vector, then convert to list
 
 #window_len = 120
-window_len = 1200
-
-tick_data = tick_ar[:window_len].tolist()
-pitch_data = pitch_ar[:window_len].tolist()
-velocity_data = velocity_ar[:window_len].tolist()
-
-print 'Converting data to list. . .'
-
-# Extract the first 30 elements of the data vector, then convert to list
-
-#window_len = 120
-window_len = 700
+window_len = 500
 
 tick_data = tick_ar[:window_len].tolist()
 pitch_data = pitch_ar[:window_len].tolist()
@@ -426,8 +418,8 @@ for (sample, target) in ds.getSequenceIterator(0):
     duration = tick_n/5
     volume = velocity_n
 
-    #time = tick_to_time(tick_n) 
-    time = tick_n   # Problem is its chords is not good at all
+    time = tick_to_time(tick_n) 
+    #time = tick_n   # Problem is its chords is not good at all
     #time = time + 0.5  # Current solution 
     
     MyMIDI.addNote(track,channel,pitch,time,duration,volume)           

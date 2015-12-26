@@ -2,8 +2,8 @@ import midi
 import numpy as np
 
 #path = 'example.mid'
-#path = 'Songs/my-heart-will-go-on-titanic.mid'
-path = 'Songs/Suteki-Da-Ne.mid'
+path = 'Songs/my-heart-will-go-on-titanic.mid'
+#path = 'Songs/Suteki-Da-Ne.mid'
 #path = 'Songs/10_little_indians.mid'
 #path = 'training-ground/twinkle_twinkle.mid'
 #path = 'result.mid'
@@ -50,13 +50,17 @@ print 'Extracting all of pattern[1]'
 pat = midi.Pattern()
 note_on = 0
 note_off = 0
-while True:
-    # Instantiate a MIDI Track (contains a list of MIDI events)
-    
-    track = midi.Track()
 
-    # Append the track to the pattern
-    pat.append(track)
+# Instantiate a MIDI Track (contains a list of MIDI events)
+track = midi.Track()
+
+# Append the track to the pattern
+pat.append(track)
+
+
+while True:
+    
+    
     print 'tr: ', tr
 
     if tr > len(pattern) - 1:
@@ -133,17 +137,21 @@ while True:
         
         if note_type == 'Note On':
             channel = pattern[tr][i].channel
-            track.append(midi.NoteOnEvent(tick= tick, channel=channel, data=[np.array(pitch), velocity]))
+            data = pattern[tr][i].data
+            #track.append(midi.NoteOnEvent(tick= tick, channel=channel, data=[np.array(pitch), velocity]))
+            track.append(midi.NoteOnEvent(tick= tick, channel=channel, data=data))
             note_on = note_on + 1
         elif note_type == 'Note Off':
             channel = pattern[tr][i].channel
-            track.append(midi.NoteOffEvent(tick= tick, channel=channel, data=[np.array(pitch), velocity]))
+            data = pattern[tr][i].data
+            #track.append(midi.NoteOffEvent(tick= tick, channel=channel, data=[np.array(pitch), velocity]))
+            track.append(midi.NoteOffEvent(tick= tick, channel=channel, data=data))
             note_off = note_off + 1
-        
+        '''
         elif note_type == 'Program Change':
             channel = pattern[tr][i].channel
             track.append(midi.ProgramChangeEvent(tick= tick, channel=channel, data=[np.array(pitch)]))
-        '''
+        
         elif note_type == 'Control Change':
             channel = pattern[tr][i].channel
             track.append(midi.ControlChangeEvent(tick= tick, channel=channel, data=[np.array(pitch)]))
@@ -152,15 +160,31 @@ while True:
             text = pattern[tr][i].text
             data = pattern[tr][i].data
             track.append(midi.TrackNameEvent(tick= tick, text=text, data=data))
+        
+        elif note_type == 'Pitch Wheel':
+            tick = pattern[tr][i].tick
+            channel = pattern[tr][i].channel
+            data = pattern[tr][i].data
+            track.append(midi.TrackNameEvent(tick= tick, channel=text, data=data))
+        elif note_type == 'Set Tempo':
+            tick = pattern[tr][i].tick
+            data = pattern[tr][i].data
+            track.append(midi.TrackNameEvent(tick= tick, data=data))
+        elif note_type == 'MIDI Port/Cable':
+            tick = pattern[tr][i].tick
+            data = pattern[tr][i].data
+            track.append(midi.TrackNameEvent(tick= tick, data=data))
+        else:
+            print note_type
+            print pattern[tr][i]
         '''
-
 
         i = i + 1
         
         #track.append(midi.NoteOnEvent(tick= tick, channel=1, data=[np.array(pitch), velocity]))
         
         
-    print len(pat[tr-1])
+    #print len(pat[tr-1])
 
     # Emergency break if we want to just decompose one channel
     # break
