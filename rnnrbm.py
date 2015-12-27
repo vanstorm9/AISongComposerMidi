@@ -240,9 +240,10 @@ class RnnRbm:
         num_epochs : integer
             Number of epochs (pass over the training set) performed. The user
             can safely interrupt training with Ctrl+C at any time.'''
-
         assert len(files) > 0, 'Training set is empty!' \
                                ' (did you download the data files?)'
+        
+        print 'Declaring dataset. . .'
         dataset = [midiread(f, self.r,
                             self.dt).piano_roll.astype(theano.config.floatX)
                    for f in files]
@@ -272,8 +273,9 @@ class RnnRbm:
             A MIDI file will be created at this location.
         show : boolean
             If True, a piano-roll of the generated sequence will be shown.'''
-
+        
         piano_roll = self.generate_function()
+        print filename
         midiwrite(filename, piano_roll, self.r, self.dt)
         if show:
             extent = (0, self.dt * len(piano_roll)) + self.r
@@ -287,15 +289,23 @@ class RnnRbm:
 
 
 def test_rnnrbm(batch_size=100, num_epochs=200):
+    print 'Loading model. . .'
     model = RnnRbm()
-    re = os.path.join(os.path.split(os.path.dirname(__file__))[0],
-                      'data', 'Nottingham', 'train', '*.mid')
+    print 'Accessing files. . .'
+    #re = os.path.join(os.path.split(os.path.dirname(__file__))[0],
+    #                  'data', 'Nottingham', 'train_classical', '*.mid')
+    re = '/home/anthony/Documents/Programming/Python/Sound/Projects/AISongComposerMidi/data/Nottingham/train_classical/*.mid'
+    print re
+    print 'Training. . .'
     model.train(glob.glob(re),
                 batch_size=batch_size, num_epochs=num_epochs)
     return model
 
 if __name__ == '__main__':
     model = test_rnnrbm()
+    print 'Generating midi file 1. . .'
     model.generate('sample1.mid')
+    print 'Generating midi file 2. . .'
     model.generate('sample2.mid')
+    print 'Showing graph. . .'
     pylab.show()
