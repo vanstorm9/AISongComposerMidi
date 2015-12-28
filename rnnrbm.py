@@ -6,6 +6,7 @@
 import glob
 import os
 import sys
+import normalizer
 
 import numpy
 try:
@@ -299,6 +300,8 @@ def test_rnnrbm(batch_size=100, num_epochs=200):
     #                  'data', 'Nottingham', 'train_classical', '*.mid')
     re = './data/Nottingham/train_classical/*.mid'
     print re
+    print 'Normalizing midi files. . .'
+    normalizer.transpose_cmajor_aminor(re)
     print 'Training. . .'
     model.train(glob.glob(re),
                 batch_size=batch_size, num_epochs=num_epochs)
