@@ -248,9 +248,12 @@ class RnnRbm:
                             self.dt).piano_roll.astype(theano.config.floatX)
                    for f in files]
 
+        
+        
         try:
             for epoch in xrange(num_epochs):
                 numpy.random.shuffle(dataset)
+                
                 costs = []
 
                 for s, sequence in enumerate(dataset):
@@ -294,7 +297,7 @@ def test_rnnrbm(batch_size=100, num_epochs=200):
     print 'Accessing files. . .'
     #re = os.path.join(os.path.split(os.path.dirname(__file__))[0],
     #                  'data', 'Nottingham', 'train_classical', '*.mid')
-    re = '/home/anthony/Documents/Programming/Python/Sound/Projects/AISongComposerMidi/data/Nottingham/train_classical/*.mid'
+    re = './data/Nottingham/train_classical/*.mid'
     print re
     print 'Training. . .'
     model.train(glob.glob(re),
