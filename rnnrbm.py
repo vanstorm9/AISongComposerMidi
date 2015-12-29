@@ -183,7 +183,7 @@ class RnnRbm:
         self,
         n_hidden=150,
         n_hidden_recurrent=100,
-        lr=0.001,
+        lr=0.01,
         r=(21, 109),
         dt=0.3
     ):
@@ -298,10 +298,12 @@ def test_rnnrbm(batch_size=100, num_epochs=200):
     print 'Accessing files. . .'
     #re = os.path.join(os.path.split(os.path.dirname(__file__))[0],
     #                  'data', 'Nottingham', 'train_classical', '*.mid')
-    re = './data/Nottingham/train_classical/*.mid'
+    path = './data/Nottingham/train'
+    mid_p = '/*.mid'
+    re = path + mid_p
     print re
     print 'Normalizing midi files. . .'
-    normalizer.transpose_cmajor_aminor(re)
+    normalizer.transpose_cmajor_aminor(path)
     print 'Training. . .'
     model.train(glob.glob(re),
                 batch_size=batch_size, num_epochs=num_epochs)
